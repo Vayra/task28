@@ -10,6 +10,9 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "express-vue": "^5.8.2",
+    "leaflet": "^1.4.0",
+    "nodemon": "^1.18.10",
     "vue": "^2.6.10"
   }
 }
