@@ -2,18 +2,22 @@
 <html>
 
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <!--<link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
         integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
         crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
         integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
-        crossorigin=""></script>
+        crossorigin=""></script>-->
 </head>
 
 <body>
-    <div id="mapid"></div>
-    <script>
-        var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+    <div id='app'>
+        <div id="mapid"></div>
+    </div>
+    <!--<script>
+        var mymap = L.map('mapid').setView([59.9139, 10.7522], 8);
 
         const access_token = 'pk.eyJ1IjoidmF5cmEiLCJhIjoiY2p0cGhyb2UwMDJ2bzQ0bzc2bmUxYXgwYiJ9.bzvNNOssxSGv4BwarWO9Bw'
 
@@ -24,7 +28,7 @@
             id: 'mapbox.streets',
             accessToken: access_token
         }).addTo(mymap);
-    </script>
+    </script>-->
 </body>
 
 </html>
