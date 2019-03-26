@@ -13,6 +13,8 @@ const accessToken = 'pk.eyJ1IjoidmF5cmEiLCJhIjoiY2p0cGhyb2UwMDJ2bzQ0bzc2bmUxYXgw
 Vue.use(BootstrapVue)
 Vue.config.productionTip = false
 
+let oslo = [59.9139, 10.7522]
+let loc = [60.10, 9.58]
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -26,18 +28,21 @@ new Vue({
         active: false,
         features: []
       }
-    ]
+    ],
+    position: []
   },
   router,
-  template: '<App/>',
+  template: `<App 
+  @updatePosition="updatePosition"
+  @resetPosition="resetPosition"/>`,
   components: { App },
-  mounted () {
+  mounted() {
     this.initMap()
     this.initLayers()
   },
   methods: {
-    initMap () {
-      this.map = L.map('mapid').setView([59.9139, 10.7522], 4.5)
+    initMap() {
+      this.map = L.map('mapid').setView([loc[0], loc[1]], 8)
       this.tileLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -46,6 +51,21 @@ new Vue({
       })
       this.tileLayer.addTo(this.map)
     },
-    initLayers () { }
+    initLayers() { },
+    updatePosition(loc){
+      console.log('updatePosition event handled')
+      this.position = loc
+    },
+    resetPosition(){
+      console.log('resetting position')
+      this.position = loc
+      this.map.setView(loc, 5)
+    }
+  },
+  watch: {
+    position () {
+      this.map.setView(this.position)
+    }
   }
 })
+
