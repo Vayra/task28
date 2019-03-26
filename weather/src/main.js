@@ -29,12 +29,14 @@ new Vue({
         features: []
       }
     ],
-    position: []
+    position: [],
+    time: 'current' /* current, tomorrow, long */
   },
   router,
   template: `<App 
   @updatePosition="updatePosition"
-  @resetPosition="resetPosition"/>`,
+  @resetPosition="resetPosition"
+  @updateTime="updateTime"/>`,
   components: { App },
   mounted() {
     this.initMap()
@@ -60,6 +62,9 @@ new Vue({
       console.log('resetting position')
       this.position = loc
       this.map.setView(loc, 5)
+    },
+    updateTime(time){
+      this.time = time;
     }
   },
   watch: {
