@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="md" type="dark" variant="dark" class='bar'>
+    <b-navbar toggleable="md" type="dark" variant="dark" class="bar">
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-navbar-brand to="/">My Vue App</b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
@@ -18,6 +18,11 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
+    <ul>
+      <li v-for="forecast in forecastArray" v-bind:key="forecast.city">
+        {{forecast.city}} 
+      </li>
+    </ul>
     <!-- routes will be rendered here -->
     <router-view/>
   </div>
@@ -29,15 +34,97 @@ export default {
   data() {
     return {
       time: "Current",
+      info: null,
+      Oslo: null,
+      Bergen: null,
+      Stavanger: null,
+      Trondheim: null,
+      Haugesund: null,
+      Drammen: null,
+      Kristiansand: null,
+      forecastArray: [],
+
+      cityNames: [
+        "Oslo",
+        "Bergen",
+        "Stavanger",
+        "Trondheim",
+        "Haugesund",
+        "Drammen",
+        "Kristiansand"
+      ],
+      position: [],
+      map: null,
+      tileLayer: null,
+      layers: [
+        {
+          id: 0,
+          name: "Cities",
+          active: true,
+          features: [
+            {
+              id: 0,
+              name: "Oslo",
+              type: "marker",
+              coords: [59.9139, 10.7522]
+            }
+          ]
+        }
+      ]
     };
   },
-  async created() {},
+  async created() {
+    const axios = require("axios");
+    //let forecastString = this.forecastString
+    let i = 0;
+    for (let city of this.cityNames) {
+      axios
+        .get('http://api.openweathermap.org/data/2.5/forecast?q=' + city + ',NO&APPID=4c3e7f6505140a61cdeee7719f798c32')
+        .then((result) => {
+          this.info = result.data
+          let forecast = {
+            city: city,
+            today: "Today at " + ((this.info.list[0].dt_txt).substring(11)) + "\nTemperature: " +
+              ((this.info.list[0].main.temp - 272.15).toFixed(1)) + " Degrees Celsius" + "\n" +
+              (this.info.list[0].weather[0].description),
+            tomorrow: "Tomorrow at " + ((this.info.list[8].dt_txt).substring(11)) + "\nTemperature: " +
+              ((this.info.list[8].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+              (this.info.list[8].weather[0].description),
+            day3: ((this.info.list[16].dt_txt)) + "\nTemperature: " +
+              ((this.info.list[16].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+              (this.info.list[16].weather[0].description),
+            day4: ((this.info.list[24].dt_txt)) + "\nTemperature: " +
+              ((this.info.list[24].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+              (this.info.list[24].weather[0].description),
+            day5: ((this.info.list[32].dt_txt)) + "\nTemperature: " +
+              ((this.info.list[32].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+              (this.info.list[32].weather[0].description)
+          }
+          this[city] = forecast
+          this.forecastArray.push(forecast)
+        })
+        .catch(error => console.log(city + '\n ' + error))
+
+    }
+    //this.forecastString = forecastString
+
+
+  },
+  mounted() {
+    this.initMap()
+    this.initLayers()
+    this.layerChanged(true)
+  },
   watch: {
-    checked() {
+    /*checked() {
       this.$emit("layerChanged", this.checked);
+    }*/
+    position() {
+      this.map.flyTo(this.position)
     }
   },
   methods: {
+    /*
     updatePosition(loc) {
       console.log("Emitting updatePosition");
       this.$emit("updatePosition", loc);
@@ -49,6 +136,47 @@ export default {
     updateTime(time) {
       this.time = time;
       this.$emit("updateTime", time);
+    }*/
+    initMap() {
+      const accessToken =
+  "pk.eyJ1IjoidmF5cmEiLCJhIjoiY2p0cGhyb2UwMDJ2bzQ0bzc2bmUxYXgwYiJ9.bzvNNOssxSGv4BwarWO9Bw";
+      this.map = L.map('mapid').setView([60.10, 9.58], 8)
+      this.tileLayer = L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: accessToken
+      })
+      this.tileLayer.addTo(this.map)
+    },
+    initLayers() {
+      let this_ = this
+      const markerFeatures = this.layers[0].features.filter(feature => feature.type === 'marker');
+      markerFeatures.forEach((feature) => {
+        feature.leafletObject = L.marker(feature.coords)
+          .bindPopup(
+            feature.name
+          );
+      });
+    },
+    updatePosition(loc) {
+      console.log('updatePosition event handled')
+      this.position = loc
+    },
+    resetPosition() {
+      console.log('resetting position')
+      this.position = loc
+      this.map.setView(loc, 5)
+    },
+    updateTime(time) {
+      this.time = time;
+    },
+    layerChanged(active) {
+      this.layers[0].features.forEach((feature) => {
+        if (active) {
+          feature.leafletObject.addTo(this.map);
+        }
+      });
     }
   }
 };
