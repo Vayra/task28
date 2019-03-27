@@ -11,10 +11,20 @@
           <b-nav-item v-on:click="updatePosition([58.9700, 5.7331])">Stavanger</b-nav-item>
           <b-nav-item v-on:click="updatePosition([63.4305, 10.3951])">Trondheim</b-nav-item>
           <b-nav-item-dropdown extra-menu-classes="black" :text="time">
-            <b-nav-item  v-on:click='updateTime("Current")'>Current</b-nav-item>
-            <b-nav-item  v-on:click='updateTime("Tomorrow")'>Tomorrow</b-nav-item>
-            <b-nav-item  v-on:click='updateTime("LongTerm")'>Long term</b-nav-item>
+            <b-nav-item v-on:click="updateTime("Current")">Current</b-nav-item>
+            <b-nav-item v-on:click="updateTime("Tomorrow")">Tomorrow</b-nav-item>
+            <b-nav-item v-on:click="updateTime("LongTerm")">Long term</b-nav-item>
           </b-nav-item-dropdown>
+          <b-nav-item>
+            <label class="form-check-label">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="active"
+              >
+              Cities
+            </label>
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -29,24 +39,32 @@ export default {
   name: "app",
   data() {
     return {
-      time: 'Current'
+      time: "Current",
+      active: true
     };
   },
   async created() {},
   watch: {
+    active () {
+      this.$emit("layerChanged", this.active);
+    }
   },
   methods: {
     updatePosition(loc) {
       console.log("Emitting updatePosition");
       this.$emit("updatePosition", loc);
     },
-    resetPosition(){
+    resetPosition() {
       console.log("Emitting resetPosition");
       this.$emit("resetPosition");
     },
-    updateTime(time){
+    updateTime(time) {
       this.time = time;
-      this.$emit("updateTime", time)
+      this.$emit("updateTime", time);
+    },
+    layerChanged() {
+      this.active = !this.active
+      this.$emit("layerChanged", this.active);
     }
   }
 };
@@ -89,8 +107,6 @@ header span {
 }
 
 .black {
-  background-color:#343a40;
+  background-color: #343a40;
 }
-
-
 </style>
