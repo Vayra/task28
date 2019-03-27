@@ -1,7 +1,7 @@
 <template>
   <div class="hero">
     <div>
-      <h1 class="display-3">Shitty Weather App</h1>
+      <h1 class="display-3">Weather App</h1>
       <p class="lead">Weather report for a random selection of cities</p>
       <div id="mapid"></div>
     </div>

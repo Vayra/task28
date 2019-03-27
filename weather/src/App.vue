@@ -10,6 +10,7 @@
           <b-nav-item v-on:click="updatePosition([60.3913, 5.3221])">Bergen</b-nav-item>
           <b-nav-item v-on:click="updatePosition([58.9700, 5.7331])">Stavanger</b-nav-item>
           <b-nav-item v-on:click="updatePosition([63.4305, 10.3951])">Trondheim</b-nav-item>
+          <b-nav-item v-on:click="updatePosition([58.1599, 8.0182])">Kristiansand</b-nav-item>
           <b-nav-item-dropdown extra-menu-classes="black" :text="time">
             <b-nav-item v-on:click="updateTime('Current')">Current</b-nav-item>
             <b-nav-item v-on:click="updateTime('Tomorrow')">Tomorrow</b-nav-item>
