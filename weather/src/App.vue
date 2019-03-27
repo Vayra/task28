@@ -41,11 +41,11 @@
 
         <tr v-for="forecast in forecastArray" v-bind:key="forecast.city">
           <td>{{forecast.city}}</td>
-          <td v-show="time==='Current' || time==='LongTerm'">{{forecast.today}}</td>
-          <td v-show="time==='Tomorrow' || time==='LongTerm'">{{forecast.tomorrow}}</td>
-          <td v-show="time==='LongTerm'">{{forecast.day3}}</td>
-          <td v-show="time==='LongTerm'">{{forecast.day4}}</td>
-          <td v-show="time==='LongTerm'">{{forecast.day5}}</td>
+          <td v-show="time==='Current' || time==='LongTerm'">{{forecast.today}} <img v-bind:src="'http://openweathermap.org/img/w/'+forecast.todayIcon + '.png'"></td>
+          <td v-show="time==='Tomorrow' || time==='LongTerm'">{{forecast.tomorrow}} <img v-bind:src="'http://openweathermap.org/img/w/'+forecast.tomorrowIcon + '.png'"></td>
+          <td v-show="time==='LongTerm'">{{forecast.day3}} <img v-bind:src="'http://openweathermap.org/img/w/'+forecast.day3Icon + '.png'"></td>
+          <td v-show="time==='LongTerm'">{{forecast.day4}} <img v-bind:src="'http://openweathermap.org/img/w/'+forecast.day4Icon + '.png'"></td>
+          <td v-show="time==='LongTerm'">{{forecast.day5}} <img v-bind:src="'http://openweathermap.org/img/w/'+forecast.day5Icon + '.png'"></td>
         </tr>
       </table>
     </div>
@@ -125,6 +125,7 @@ export default {
     const axios = require("axios");
     //let forecastString = this.forecastString
     let i = 0;
+    // Get weather data for each city and save to forecastArray
     for (let city of this.cityNames) {
       axios
         .get(
@@ -133,8 +134,8 @@ export default {
             ",NO&APPID=4c3e7f6505140a61cdeee7719f798c32"
         )
         .then(result => {
-          this.info = result.data;
-          let forecast = {
+          this.info = result.data; //Somehow not available outside this one method, even though Vue inspector sees it
+          let forecast = { // Object of forecast data
             city: city,
             today:
               "\nTemperature: " +
@@ -165,9 +166,15 @@ export default {
               (this.info.list[32].main.temp - 272.15).toFixed(1) +
               "°C" +
               " Weather: " +
-              this.info.list[32].weather[0].description
+              this.info.list[32].weather[0].description,
+            todayIcon: this.info.list[0].weather[0].icon,
+            tomorrowIcon: this.info.list[8].weather[0].icon,
+            day3Icon: this.info.list[16].weather[0].icon,
+            day4Icon: this.info.list[24].weather[0].icon,
+            day5Icon: this.info.list[32].weather[0].icon,
           };
-          this[city] = forecast;
+          //this[city] = forecast;
+          
           this.forecastArray.push(forecast);
         })
         .catch(error => console.log(city + "\n " + error));
@@ -180,28 +187,12 @@ export default {
     this.layerChanged(true);
   },
   watch: {
-    /*checked() {
-      this.$emit("layerChanged", this.checked);
-    }*/
     position() {
       this.map.flyTo(this.position);
     }
   },
   methods: {
-    /*
-    updatePosition(loc) {
-      console.log("Emitting updatePosition");
-      this.$emit("updatePosition", loc);
-    },
-    resetPosition() {
-      console.log("Emitting resetPosition");
-      this.$emit("resetPosition");
-    },
-    updateTime(time) {
-      this.time = time;
-      this.$emit("updateTime", time);
-    }*/
-    initMap() {
+    initMap() { //Init map setup
       const accessToken =
         "pk.eyJ1IjoidmF5cmEiLCJhIjoiY2p0cGhyb2UwMDJ2bzQ0bzc2bmUxYXgwYiJ9.bzvNNOssxSGv4BwarWO9Bw";
       this.map = L.map("mapid").setView([60.1, 9.58], 8);
@@ -229,18 +220,16 @@ export default {
       });
     },
     updatePosition(loc) {
-      console.log("updatePosition event handled");
       this.position = loc;
     },
     resetPosition() {
-      console.log("resetting position");
-      this.position = loc;
-      this.map.setView(loc, 5);
+      this.position = [60.1, 9.58];
+      this.map.setView([60.1, 9.58], 5);
     },
-    updateTime(time) {
+    updateTime(time) { // Change between today/tomorrow/long term data displayed
       this.time = time;
     },
-    layerChanged(active) {
+    layerChanged(active) { // make map markers visible
       this.layers[0].features.forEach(feature => {
         if (active) {
           feature.leafletObject.addTo(this.map);
