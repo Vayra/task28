@@ -18,7 +18,7 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-
+  
     <!-- routes will be rendered here -->
     <router-view/>
   </div>
@@ -34,7 +34,6 @@ export default {
   },
   async created() {},
   watch: {
-    // everytime a route is changed refresh the activeUser
   },
   methods: {
     updatePosition(loc) {
@@ -47,7 +46,7 @@ export default {
     },
     updateTime(time){
       this.time = time;
-      this.$$emit("updateTime", time)
+      this.$emit("updateTime", time)
     }
   }
 };

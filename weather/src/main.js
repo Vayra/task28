@@ -69,7 +69,7 @@ new Vue({
   },
   watch: {
     position () {
-      this.map.setView(this.position)
+      this.map.flyTo(this.position)
     }
   }
 })
