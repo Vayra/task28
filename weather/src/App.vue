@@ -1,15 +1,35 @@
 <template>
-  <div id='app'>
-    <b-navbar toggleable='md' type='dark' variant='dark'>
-      <b-navbar-toggle target='nav_collapse'></b-navbar-toggle>
-      <b-navbar-brand to='/'>My Vue App</b-navbar-brand>
-      <b-collapse is-nav id='nav_collapse'>
+  <div id="app">
+    <b-navbar toggleable="md" type="dark" variant="dark">
+      <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+      <b-navbar-brand to="/">My Vue App</b-navbar-brand>
+      <b-collapse is-nav id="nav_collapse">
         <b-navbar-nav>
-          <b-nav-item to='/'>Home</b-nav-item>
+          <b-nav-item v-on:click="resetPosition()">Home</b-nav-item>
+          <b-nav-item v-on:click="updatePosition([59.9139, 10.7522])">Oslo</b-nav-item>
+          <b-nav-item v-on:click="updatePosition([60.3913, 5.3221])">Bergen</b-nav-item>
+          <b-nav-item v-on:click="updatePosition([58.9700, 5.7331])">Stavanger</b-nav-item>
+          <b-nav-item v-on:click="updatePosition([63.4305, 10.3951])">Trondheim</b-nav-item>
+          <b-nav-item-dropdown extra-menu-classes="black" :text="time">
+            <b-nav-item v-on:click="updateTime("Current")">Current</b-nav-item>
+            <b-nav-item v-on:click="updateTime("Tomorrow")">Tomorrow</b-nav-item>
+            <b-nav-item v-on:click="updateTime("LongTerm")">Long term</b-nav-item>
+          </b-nav-item-dropdown>
+          <b-nav-item>
+            <label class="form-check-label">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="active"
+                @change="layerChanged()"
+              >
+              Cities
+            </label>
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    
+
     <!-- routes will be rendered here -->
     <router-view/>
   </div>
@@ -17,21 +37,36 @@
 
 <script>
 export default {
-  name: 'app',
-  data () {
+  name: "app",
+  data() {
     return {
-      activeUser: null
-    }
+      time: "Current",
+      active: true
+    };
   },
-  async created () {
-  },
+  async created() {},
   watch: {
     // everytime a route is changed refresh the activeUser
-    $route: 'refreshActiveUser'
   },
   methods: {
+    updatePosition(loc) {
+      console.log("Emitting updatePosition");
+      this.$emit("updatePosition", loc);
+    },
+    resetPosition() {
+      console.log("Emitting resetPosition");
+      this.$emit("resetPosition");
+    },
+    updateTime(time) {
+      this.time = time;
+      this.$$emit("updateTime", time);
+    },
+    layerChanged() {
+      this.active= !this.active
+      this.$emit("layerChanged", this.active);
+    }
   }
-}
+};
 </script>
 
 <style>
@@ -40,7 +75,7 @@ body {
 }
 
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
@@ -68,5 +103,9 @@ header span {
   font-weight: 400;
   box-sizing: border-box;
   padding-top: 16px;
+}
+
+.black {
+  background-color: #343a40;
 }
 </style>

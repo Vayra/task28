@@ -24,13 +24,13 @@
 
 <script>
 export default {
-  name: 'hello',
-  data () {
+  name: "hello",
+  data() {
     return {
-      msg: 'Welcome to Your Vue.js PWA'
-    }
+      msg: "Welcome to Your Vue.js PWA"
+    };
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -55,6 +55,6 @@ a {
 }
 
 #mapid {
-  height:500px;
+  height: 500px;
 }
 </style>
