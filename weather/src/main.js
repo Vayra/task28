@@ -22,8 +22,8 @@ new Vue({
   el: "#app",
   data: {
     info: null,
-    forecastString: null,
-    city: 'Oslo',
+    forecastString: [],
+    cityNames: ['Oslo', 'Bergen', 'Stavanger', 'Trondheim', 'Haugesund', 'Drammen', 'Kristiansand'],
     map: null,
     tileLayer: null,
     layers: [
@@ -39,7 +39,7 @@ new Vue({
             coords: [59.9139, 10.7522],
           }
         ],
-        
+
       }
 
     ],
@@ -48,32 +48,37 @@ new Vue({
   },
   router,
   created() {
-    axios
-    .get('http://api.openweathermap.org/data/2.5/forecast?q=' + this.city + '&APPID=4c3e7f6505140a61cdeee7719f798c32')
-    .then((result) => {
-      this.info = result.data
-  
-      this.forecastString = "City: " + (this.info.city.name) + "\n\nToday at " + ((this.info.list[0].dt_txt).substring(11)) + "\nTemperature: " + 
-      ((this.info.list[0].main.temp - 272.15).toFixed(1)) + " Degrees Celsius" + "\n" + 
-      (this.info.list[0].weather[0].description) + "\n \nTomorrow at " + ((this.info.list[8].dt_txt).substring(11))+"\nTemperature: " + 
-      ((this.info.list[8].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" + 
-      (this.info.list[8].weather[0].description) + "\n \n" + ((this.info.list[16].dt_txt))+"\nTemperature: " + 
-      ((this.info.list[16].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" + 
-      (this.info.list[16].weather[0].description) + "\n \n" + ((this.info.list[24].dt_txt))+"\nTemperature: " + 
-      ((this.info.list[24].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" + 
-      (this.info.list[24].weather[0].description) + "\n \n" + ((this.info.list[32].dt_txt))+"\nTemperature: " + 
-      ((this.info.list[32].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" + 
-      (this.info.list[32].weather[0].description)
+    for (let city of this.cityNames) {
+      axios
+        .get('http://api.openweathermap.org/data/2.5/forecast?q=' + city + ',NO&APPID=4c3e7f6505140a61cdeee7719f798c32')
+        .then((result) => {
+          this.info = result.data
 
-      console.log(this.forecastString)
-    })
-    .catch(error => console.log(error.response))
+          let forecast = [city, "Today at " + ((this.info.list[0].dt_txt).substring(11)) + "\nTemperature: " +
+          ((this.info.list[0].main.temp - 272.15).toFixed(1)) + " Degrees Celsius" + "\n" +
+          (this.info.list[0].weather[0].description), "Tomorrow at " + ((this.info.list[8].dt_txt).substring(11)) + "\nTemperature: " +
+          ((this.info.list[8].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+        (this.info.list[8].weather[0].description), ((this.info.list[16].dt_txt)) + "\nTemperature: " +
+        ((this.info.list[16].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+        (this.info.list[16].weather[0].description), ((this.info.list[24].dt_txt)) + "\nTemperature: " +
+        ((this.info.list[24].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+        (this.info.list[24].weather[0].description), ((this.info.list[32].dt_txt)) + "\nTemperature: " +
+        ((this.info.list[32].main.temp - 272.15).toFixed(1)) + " Degrees Celcius" + "\n" +
+        (this.info.list[32].weather[0].description)]
+
+          this.forecastString.push(forecast)
+
+          //console.log(forecast)
+        })
+        .catch(error => console.log(city + '\n ' + error.response))
+    }
+    console.log(this.forecastString)
+
   },
   template: `<App 
   @updatePosition="updatePosition"
   @resetPosition="resetPosition"
-  @updateTime="updateTime"
-  @layerChanged="layerChanged"/>`,
+  @updateTime="updateTime"/>`,
   components: { App },
   mounted() {
     this.initMap()
@@ -91,24 +96,24 @@ new Vue({
       this.tileLayer.addTo(this.map)
     },
     initLayers() { },
-    updatePosition(loc){
+    updatePosition(loc) {
       console.log('updatePosition event handled')
       this.position = loc
     },
-    resetPosition(){
+    resetPosition() {
       console.log('resetting position')
       this.position = loc
       this.map.setView(loc, 5)
     },
-    updateTime(time){
+    updateTime(time) {
       this.time = time;
     },
-    layerChanged(active){
-        this.layers[0].active = active
+    layerChanged(active) {
+      this.layers[0].active = active
     }
   },
   watch: {
-    position () {
+    position() {
       this.map.flyTo(this.position)
     }
   }

@@ -27,7 +27,8 @@ export default {
   name: "hello",
   data() {
     return {
-      msg: "Welcome to Your Vue.js PWA"
+      msg: "Welcome to Your Vue.js PWA",
+      checked: true
     };
   }
 };
@@ -55,6 +56,7 @@ a {
 }
 
 #mapid {
-  height: 500px;
+  height: 400px;
+  z-index: -1;
 }
 </style>

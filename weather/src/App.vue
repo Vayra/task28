@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <b-navbar toggleable="md" type="dark" variant="dark">
+    <b-navbar toggleable="md" type="dark" variant="dark" class='bar'>
       <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
       <b-navbar-brand to="/">My Vue App</b-navbar-brand>
       <b-collapse is-nav id="nav_collapse">
@@ -11,24 +11,13 @@
           <b-nav-item v-on:click="updatePosition([58.9700, 5.7331])">Stavanger</b-nav-item>
           <b-nav-item v-on:click="updatePosition([63.4305, 10.3951])">Trondheim</b-nav-item>
           <b-nav-item-dropdown extra-menu-classes="black" :text="time">
-            <b-nav-item v-on:click="updateTime("Current")">Current</b-nav-item>
-            <b-nav-item v-on:click="updateTime("Tomorrow")">Tomorrow</b-nav-item>
-            <b-nav-item v-on:click="updateTime("LongTerm")">Long term</b-nav-item>
+            <b-nav-item v-on:click="updateTime('Current')">Current</b-nav-item>
+            <b-nav-item v-on:click="updateTime('Tomorrow')">Tomorrow</b-nav-item>
+            <b-nav-item v-on:click="updateTime('LongTerm')">Long term</b-nav-item>
           </b-nav-item-dropdown>
-          <b-nav-item>
-            <label class="form-check-label">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                v-model="active"
-              >
-              Cities
-            </label>
-          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-  
     <!-- routes will be rendered here -->
     <router-view/>
   </div>
@@ -40,13 +29,12 @@ export default {
   data() {
     return {
       time: "Current",
-      active: true
     };
   },
   async created() {},
   watch: {
-    active () {
-      this.$emit("layerChanged", this.active);
+    checked() {
+      this.$emit("layerChanged", this.checked);
     }
   },
   methods: {
@@ -61,10 +49,6 @@ export default {
     updateTime(time) {
       this.time = time;
       this.$emit("updateTime", time);
-    },
-    layerChanged() {
-      this.active = !this.active
-      this.$emit("layerChanged", this.active);
     }
   }
 };
@@ -108,5 +92,11 @@ header span {
 
 .black {
   background-color: #343a40;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 </style>
